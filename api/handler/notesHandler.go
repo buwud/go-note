@@ -40,8 +40,33 @@ func DeleteNote(c *gin.Context) {
 	id := c.Param("id")
 	for i, note := range notes {
 		if note.ID == id {
-			notes := append(notes[:i], notes[i+1:]...)
+			notes = append(notes[:i], notes[i+1:]...)
 			c.IndentedJSON(http.StatusOK, notes)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "note not found"})
+}
+
+func AddNote(c *gin.Context) {
+	var newNote note
+	if err := c.BindJSON(&newNote); err != nil {
+		return
+	}
+	notes = append(notes, newNote)
+	c.IndentedJSON(http.StatusCreated, newNote)
+}
+
+func UpdateNote(c *gin.Context) {
+	id := c.Param("id")
+	var updatedNote note
+	if err := c.BindJSON(&updatedNote); err != nil {
+		return
+	}
+	for _, note := range notes {
+		if note.ID == id {
+			note = updatedNote
+			c.IndentedJSON(http.StatusOK, updatedNote)
 			return
 		}
 	}
