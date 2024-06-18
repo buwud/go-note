@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gonote.com/infrastructure"
 )
 
 type note struct {
@@ -22,6 +23,8 @@ var notes = []note{
 }
 
 func GetNotes(c *gin.Context) {
+	infrastructure.LoadEnv()
+	infrastructure.NewDatabase()
 	c.IndentedJSON(http.StatusOK, notes)
 }
 
