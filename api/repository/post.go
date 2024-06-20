@@ -15,10 +15,13 @@ func NewNoteRepo(db infrastructure.Database) NoteRepository {
 		db: db,
 	}
 }
+
+// create note
 func (n NoteRepository) Save(note models.Note) error {
 	return n.db.DB.Create(&note).Error
 }
 
+// find all notes
 func (n NoteRepository) FindAll(note models.Note, keyword string) (*[]models.Note, int64, error) {
 	var notes []models.Note
 	var totalRows int64 = 0
@@ -38,4 +41,23 @@ func (n NoteRepository) FindAll(note models.Note, keyword string) (*[]models.Not
 	return &notes, totalRows, err
 }
 
-//to be continued.....
+// find note
+func (n NoteRepository) Find(note models.Note) (models.Note, error) {
+	var notes models.Note
+	err := n.db.DB.
+		Debug().
+		Model(&models.Note{}).
+		Where(&note).
+		Take(&notes).Error
+	return notes, err
+}
+
+// update note
+func (n NoteRepository) Update(note models.Note) error {
+	return n.db.DB.Save(&note).Error
+}
+
+// delete note
+func (n NoteRepository) Delete(note models.Note) error {
+	return n.db.DB.Delete(&note).Error
+}
