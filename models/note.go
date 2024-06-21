@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Note struct {
-	ID          string    `gorm:"primary_key;auto_increment" json:"id"`
+	ID          int64     `gorm:"primary_key;auto_increment" json:"id"`
 	Title       string    `gorm:"size:200" json:"title"`
 	Description string    `gorm:"size:500" json:"description"`
 	Date        string    `json:"date"`
