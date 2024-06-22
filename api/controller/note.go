@@ -65,3 +65,5 @@ func (n *NoteController) AddNote(ctx *gin.Context) {
 	}
 	util.SuccessJSON(ctx, http.StatusCreated, "Note Successfully Created")
 }
+
+// GetNote controller will be added
