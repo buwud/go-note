@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gonote.com/api/service"
@@ -39,11 +40,35 @@ func (n *NoteController) GetNotes(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, &util.Response{Success: true,
-		Message: "Note post set",
+		Message: "result note set",
 		Data: map[string]interface{}{
 			"rows":       responseArr,
 			"total_rows": total,
 		}})
+}
+
+// GetNote controller
+func (n *NoteController) GetNote(ctx *gin.Context) {
+	id := ctx.Param("id")
+	parsedId, err := strconv.ParseInt(id, 10, 64) //string to integer
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "ID is invalid x-x")
+		return
+	}
+	var note models.Note
+	note.ID = parsedId
+	foundNote, err := n.service.Find(note)
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Finding note went wrong x-x")
+		return
+	}
+	response := foundNote.ResponseMap()
+
+	ctx.JSON(http.StatusOK, &util.Response{
+		Success: true,
+		Message: "Result set of note",
+		Data:    &response,
+	})
 }
 
 // AddNote controller
@@ -66,4 +91,63 @@ func (n *NoteController) AddNote(ctx *gin.Context) {
 	util.SuccessJSON(ctx, http.StatusCreated, "Note Successfully Created")
 }
 
-// GetNote controller will be added
+// DeleteNote controller
+func (n *NoteController) DeleteNote(ctx *gin.Context) {
+	id := ctx.Param("id")
+	parsedId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "ID is invalid x-x")
+		return
+	}
+	var note models.Note
+	note.ID = parsedId
+	err = n.service.Delete(parsedId)
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "delete note went wrong x-x")
+		return
+	}
+
+	ctx.JSON(http.StatusOK, util.Response{
+		Success: true,
+		Message: "Deleted successfully 'U'",
+	})
+}
+
+// UpdateNote controller
+func (n *NoteController) UpdateNote(ctx *gin.Context) {
+	id := ctx.Param("id")
+	parsedId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "ID is invalid x-x")
+		return
+	}
+	var note models.Note
+	note.ID = parsedId
+
+	noteRecord, err := n.service.Find(note)
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Note not found x-x")
+		return
+	}
+	ctx.ShouldBindJSON(&noteRecord)
+
+	if noteRecord.Title == "" {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Title is required")
+		return
+	}
+	if noteRecord.Description == "" {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Description is required")
+	}
+	error := n.service.Update(noteRecord)
+	if error != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Updating note went wrong x-x")
+		return
+	}
+	response := noteRecord.ResponseMap()
+
+	ctx.JSON(http.StatusOK, &util.Response{
+		Success: true,
+		Message: "Updated successfully 'U'",
+		Data:    &response,
+	})
+}
