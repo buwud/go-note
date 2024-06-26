@@ -1,6 +1,10 @@
 package infrastructure
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type GinRouter struct {
 	Gin *gin.Engine
@@ -8,5 +12,11 @@ type GinRouter struct {
 
 func NewGinRouter() GinRouter {
 	httpRouter := gin.Default()
-	httpRouter.G
+
+	httpRouter.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"data": "UP and RUNNING..."})
+	})
+	return GinRouter{
+		Gin: httpRouter,
+	}
 }

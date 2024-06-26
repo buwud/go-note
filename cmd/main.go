@@ -1,15 +1,28 @@
 package main
 
 import (
-	"gonote.com/api/handler"
-
-	"github.com/gin-gonic/gin"
+	"gonote.com/api/controller"
+	"gonote.com/api/repository"
+	"gonote.com/api/routes"
+	"gonote.com/api/service"
+	"gonote.com/infrastructure"
+	"gonote.com/models"
 )
 
+func init() {
+	infrastructure.LoadEnv()
+}
+
 func main() {
-	router := gin.Default()
-	router.GET("/notes", handler.GetNotes)
-	router.POST("/notes/:id", handler.GetNoteById)
-	router.DELETE("/notes/:id", handler.DeleteNote)
-	router.Run("localhost:4242")
+	// initialize everything
+	router := infrastructure.NewGinRouter()
+	db := infrastructure.NewDatabase()
+	noteRepository := repository.NewNoteRepo(db)
+	noteService := service.NewNoteService(noteRepository)
+	noteController := controller.NewNoteController(noteService)
+	noteRoute := routes.NewNoteRoute(noteController, router)
+	noteRoute.Setup()
+
+	db.DB.AutoMigrate(&models.Note{})
+	router.Gin.Run(":4242")
 }
