@@ -24,5 +24,5 @@ func main() {
 	noteRoute.Setup()
 
 	db.DB.AutoMigrate(&models.Note{})
-	router.Gin.Run(":4242")
+	router.Gin.Run(":8000")
 }
