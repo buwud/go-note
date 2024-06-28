@@ -17,6 +17,20 @@ func (user *User) TableName() string {
 	return "user"
 }
 
+//user login struct
+type UserLogin struct {
+	Username string `form:"username" binding:"required"`
+	Password string `form:"password" binding:"required"`
+}
+
+//user register struct
+type UserRegister struct {
+	Username  string `form:"username" json:"username" binding:"required"`
+	Password  string `form:"password" json:"password" binding:"required"`
+	FirstName string `form:"first_name"`
+	LastName  string `form:"last_name"`
+}
+
 //response map
 func (user *User) ResponseMap() map[string]interface{} {
 	resp := make(map[string]interface{})
