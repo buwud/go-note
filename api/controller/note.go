@@ -32,7 +32,7 @@ func (n *NoteController) GetNotes(ctx *gin.Context) {
 		return
 	}
 
-	responseArr := make([]map[string]interface{}, 0, 0)
+	responseArr := make([]map[string]interface{}, 0)
 
 	for _, ni := range *data {
 		resp := ni.ResponseMap()
