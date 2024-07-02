@@ -17,12 +17,20 @@ func main() {
 	// initialize everything
 	router := infrastructure.NewGinRouter()
 	db := infrastructure.NewDatabase()
+	//note
 	noteRepository := repository.NewNoteRepo(db)
 	noteService := service.NewNoteService(noteRepository)
 	noteController := controller.NewNoteController(noteService)
 	noteRoute := routes.NewNoteRoute(noteController, router)
 	noteRoute.Setup()
 
-	db.DB.AutoMigrate(&models.Note{})
+	//user
+	userRepository := repository.NewUserRepo(db)
+	userService := service.NewUserService(userRepository)
+	userController := controller.NewUserController(userService)
+	userRoute := routes.NewUserRoute(userController, router)
+	userRoute.Setup()
+
+	db.DB.AutoMigrate(&models.Note{}, &models.User{})
 	router.Gin.Run(":8000")
 }
