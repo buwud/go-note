@@ -1,6 +1,6 @@
-# Go Note
+# GoNote
 
-Go Note is a note-taking application featuring a backend in Golang, a frontend in React, and a Dockerized MySQL database.
+GoNote is a note-taking application featuring a backend in Golang, a frontend in React, and a Dockerized MySQL database.
 
 ## Tech Stack
 
