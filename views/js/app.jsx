@@ -8,19 +8,38 @@ class App extends React.Component {
     }
 }
 
+const Note = ({ note }) => (
+    <div className="note">
+        <h3>{note.title}</h3>
+        <p>{note.description}</p>
+        <small>{note.created_at}</small>
+    </div>
+);
+
 class Home extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
             notes: []
-        }
+        };
     }
+
+    componentDidMount() {
+        this.serverRequest();
+    }
+
     serverRequest() {
-        $.get("http://localhost:8000/notes", res => {
-            this.setState({
-                notes: res
-            });
-        });
+        fetch("http://localhost:8000/notes")
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    this.setState({
+                        notes: res.data.rows
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching notes:', error));
     }
 
     render() {
@@ -39,16 +58,14 @@ class Home extends React.Component {
                         <h2>GoNote</h2>
                         <p>Let's feed you with some notes</p>
                         <div className="row">
-                            {this.state.notes.map(function (note, i) {
-                                return (<Note key={i} note={note} />);
-                            })}
+                            {this.state.notes.map((note, i) => (
+                                <Note key={i} note={note} />
+                            ))}
                         </div>
                     </div>
                 </div>
             </div>
-
-
-        )
+        );
     }
 }
 
@@ -60,7 +77,7 @@ class LoggedIn extends React.Component {
         }
     }
     serverRequest() {
-        $.get("http://localhost:3000/api/jokes", res => {
+        $.get("http://localhost:8000/notes/", res => {
             this.setState({
                 notes: res
             });
@@ -79,46 +96,6 @@ class LoggedIn extends React.Component {
                         {this.state.notes.map(function (note, i) {
                             return (<Note key={i} note={note} />);
                         })}
-                    </div>
-                </div>
-            </div>
-        )
-    }
-}
-
-class Note extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            liked: ""
-        }
-        this.like = this.like.bind(this);
-    }
-
-    like() {
-        // ... we'll add this block later
-    }
-    serverRequest() {
-        $.get("http://localhost:8000/notes/", res => {
-            this.setState({
-                notes: res
-            });
-        });
-    }
-
-    render() {
-        return (
-            <div className="col">
-                <div className="panel panel-default">
-                    <div className="panel-heading">#{this.props.joke.id} <span className="pull-right">{this.state.liked}</span></div>
-                    <div className="panel-body">
-                        {this.props.joke.joke}
-                    </div>
-                    <div className="panel-footer">
-                        {this.props.joke.likes} Likes &nbsp;
-                        <a onClick={this.like} className="btn btn-default">
-                            <span className="glyphicon glyphicon-thumbs-up"></span>
-                        </a>
                     </div>
                 </div>
             </div>
