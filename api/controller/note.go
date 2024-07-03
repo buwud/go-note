@@ -71,7 +71,7 @@ func (n *NoteController) GetNote(ctx *gin.Context) {
 	})
 }
 
-// AddNote controller
+// AddNote controller with userid
 func (n *NoteController) AddNote(ctx *gin.Context) {
 	var note models.Note
 	ctx.ShouldBindJSON(&note)

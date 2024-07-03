@@ -8,6 +8,8 @@ class App extends React.Component {
     }
 }
 
+
+//note component
 const Note = ({ note }) => (
     <div className="note">
         <h3>{note.title}</h3>
@@ -16,8 +18,8 @@ const Note = ({ note }) => (
     </div>
 );
 
+//home page
 class Home extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -69,6 +71,7 @@ class Home extends React.Component {
     }
 }
 
+//user's page
 class LoggedIn extends React.Component {
     constructor(props) {
         super(props);

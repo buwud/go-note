@@ -9,6 +9,7 @@ type Note struct {
 	Date        string    `json:"date"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty"`
+	UserId      int64     `json:"user_id"`
 }
 
 //sets table name for the model
@@ -25,5 +26,7 @@ func (note *Note) ResponseMap() map[string]interface{} {
 	resp["date"] = note.Date
 	resp["created_at"] = note.CreatedAt
 	resp["updated_at"] = note.UpdatedAt
+	resp["user_id"] = note.UserId
+
 	return resp
 }

@@ -72,3 +72,40 @@ func (u *UserController) SignIn(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
+// get user's notes
+func (u *UserController) GetUserNotes(ctx *gin.Context) {
+	user := ctx.MustGet("user").(models.User)
+	notes, err := u.service.GetUserNotes(user)
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get user notes")
+		return
+	}
+	response := make([]map[string]interface{}, 0)
+	for _, note := range *notes {
+		response = append(response, note.ResponseMap())
+	}
+	ctx.JSON(http.StatusOK, &util.Response{
+		Success: true,
+		Message: "Result set of note",
+		Data:    &response,
+	})
+}
+
+// GetUsers controller
+func (u *UserController) GetUsers(ctx *gin.Context) {
+	users, err := u.service.GetUsers()
+	if err != nil {
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get users")
+		return
+	}
+	response := make([]map[string]interface{}, 0)
+	for _, user := range *users {
+		response = append(response, user.ResponseMap())
+	}
+	ctx.JSON(http.StatusOK, &util.Response{
+		Success: true,
+		Message: "Result set of users",
+		Data:    &response,
+	})
+}

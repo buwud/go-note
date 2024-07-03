@@ -43,3 +43,22 @@ func (u UserRepository) SignIn(user models.UserLogin) (*models.User, error) {
 	}
 	return &dbUser, nil
 }
+
+// get users
+func (u UserRepository) GetUsers() (*[]models.User, error) {
+	var users []models.User
+	err := u.db.DB.Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+	return &users, nil
+}
+
+// get user's notes
+func (u UserRepository) GetUserNotes(user models.User) (*[]models.Note, error) {
+	err := u.db.DB.Model(&user).Preload("Note").Find(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user.Notes, nil
+}

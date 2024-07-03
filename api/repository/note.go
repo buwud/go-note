@@ -16,12 +16,12 @@ func NewNoteRepo(db infrastructure.Database) NoteRepository {
 	}
 }
 
-// create note
+// create note with userid
 func (n NoteRepository) Save(note models.Note) error {
 	return n.db.DB.Create(&note).Error
 }
 
-// find all notes
+// find all notes - bu sonra silinse olr
 func (n NoteRepository) FindAll(note models.Note, keyword string) (*[]models.Note, int64, error) {
 	var notes []models.Note
 	var totalRows int64 = 0
@@ -41,7 +41,7 @@ func (n NoteRepository) FindAll(note models.Note, keyword string) (*[]models.Not
 	return &notes, totalRows, err
 }
 
-// find note
+// find note with userid ******
 func (n NoteRepository) Find(note models.Note) (models.Note, error) {
 	var notes models.Note
 	err := n.db.DB.

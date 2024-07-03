@@ -24,3 +24,13 @@ func (u UserService) SignUp(user models.UserRegister) error {
 func (u UserService) SignIn(user models.UserLogin) (*models.User, error) {
 	return u.repository.SignIn(user)
 }
+
+// get user's notes
+func (u UserService) GetUserNotes(user models.User) (*[]models.Note, error) {
+	return u.repository.GetUserNotes(user)
+}
+
+// get users
+func (u UserService) GetUsers() (*[]models.User, error) {
+	return u.repository.GetUsers()
+}

@@ -24,5 +24,7 @@ func (u UserRoute) Setup() {
 	{
 		user.POST("/signup", u.Controller.SignUp)
 		user.POST("/signin", u.Controller.SignIn)
+		user.GET("/users", u.Controller.GetUsers)
 	}
+	user.GET("/user/notes", u.Controller.GetUserNotes)
 }
