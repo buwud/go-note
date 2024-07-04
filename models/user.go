@@ -4,8 +4,8 @@ import "time"
 
 type User struct {
 	ID        int64     `gorm:"primary_key:auto_increment" json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
+	FirstName string    `json:"firstname"`
+	LastName  string    `json:"lastname"`
 	Username  string    `json:"username"`
 	Password  string    `json:"password"`
 	Notes     []Note    `gorm:"foreign_key:UserId" json:"notes"`

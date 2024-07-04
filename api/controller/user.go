@@ -73,12 +73,14 @@ func (u *UserController) SignIn(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-// get user's notes
+// get user's notes by specicific user id, use userid from jwt token
 func (u *UserController) GetUserNotes(ctx *gin.Context) {
-	user := ctx.MustGet("user").(models.User)
-	notes, err := u.service.GetUserNotes(user)
+	user, _ := ctx.Get("user")
+	claims := user.(jwt.MapClaims)
+	userID := claims["user"].(models.User).ID
+	notes, err := u.service.GetUserNotes(models.User{ID: userID})
 	if err != nil {
-		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get user notes")
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get notes")
 		return
 	}
 	response := make([]map[string]interface{}, 0)
@@ -87,7 +89,7 @@ func (u *UserController) GetUserNotes(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, &util.Response{
 		Success: true,
-		Message: "Result set of note",
+		Message: "Result set of notes",
 		Data:    &response,
 	})
 }
