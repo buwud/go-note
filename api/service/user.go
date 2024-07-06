@@ -7,7 +7,7 @@ import (
 )
 
 type CustomClaim struct {
-	User models.UserLogin `json:"user"`
+	User models.User `json:"user"`
 	jwt.StandardClaims
 }
 
@@ -32,8 +32,8 @@ func (u UserService) SignIn(user models.UserLogin) (*models.User, error) {
 }
 
 // get user's notes
-func (u UserService) GetUserNotes(username string) (*[]models.Note, error) {
-	return u.repository.GetUserNotes(username)
+func (u UserService) GetUserNotes(userid int64) (*[]models.Note, error) {
+	return u.repository.GetUserNotes(userid)
 }
 
 // get users

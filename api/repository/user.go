@@ -55,12 +55,11 @@ func (u UserRepository) GetUsers() (*[]models.User, error) {
 }
 
 // get user's notes
-func (u UserRepository) GetUserNotes(username string) (*[]models.Note, error) {
-
+func (u UserRepository) GetUserNotes(userid int64) (*[]models.Note, error) {
 	var notes []models.Note
 	err := u.db.
 		DB.
-		Where("username = ?", username).
+		Where("user_id = ?", userid).
 		Find(&notes).
 		Error
 	if err != nil {

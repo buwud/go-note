@@ -61,7 +61,7 @@ func (u *UserController) SignIn(c *gin.Context) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user": dbUser,
-		"exp":  time.Now().Add(time.Minute * 15).Unix(),
+		"exp":  time.Now().Add(time.Second * 10).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(hmacSampleSecret))
@@ -97,12 +97,12 @@ func (u *UserController) GetUserNotes(ctx *gin.Context) {
 		return
 	}
 
-	username := claims.User.Username // Access the Username from the claims
+	userid := claims.User.ID // Access the Username from the claims
 
 	// Debugging output
-	log.Printf("Username from claims: %s", username)
+	log.Printf("Userid from claims: %v", userid)
 
-	notes, err := u.service.GetUserNotes(username)
+	notes, err := u.service.GetUserNotes(userid)
 	if err != nil {
 		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get notes")
 		return
