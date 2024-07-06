@@ -26,8 +26,8 @@ func (u UserService) SignIn(user models.UserLogin) (*models.User, error) {
 }
 
 // get user's notes
-func (u UserService) GetUserNotes(user models.User) (*[]models.Note, error) {
-	return u.repository.GetUserNotes(user)
+func (u UserService) GetUserNotes(username string) (*[]models.Note, error) {
+	return u.repository.GetUserNotes(username)
 }
 
 // get users

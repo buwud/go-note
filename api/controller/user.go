@@ -43,50 +43,62 @@ func (u *UserController) SignUp(ctx *gin.Context) {
 // generate jwt token if user logged in to the system
 func (u *UserController) SignIn(ctx *gin.Context) {
 	var user models.UserLogin
-	var SampleSecret []byte
+	SampleSecret := []byte("your_secret_key") // Use a consistent secret key
 
 	if err := ctx.ShouldBindJSON(&user); err != nil {
-		util.ErrorJSON(ctx, http.StatusBadRequest, "Invalid Json")
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
+
 	dbUser, err := u.service.SignIn(user)
 	if err != nil {
 		util.ErrorJSON(ctx, http.StatusBadRequest, "Invalid Login")
 		return
 	}
-	//generate token
+
+	// Generate token with user_id claim
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user": dbUser,
-		"exp":  time.Now().Add(time.Minute * 15).Unix(),
+		"user_id": dbUser.ID,
+		"exp":     time.Now().Add(time.Minute * 15).Unix(),
 	})
 
 	tokenString, err := token.SignedString(SampleSecret)
 	if err != nil {
-		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get token")
+		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to generate token")
 		return
 	}
+
 	response := &util.Response{
 		Success: true,
-		Message: "Token generation is successfull",
+		Message: "Token generation is successful",
 		Data:    tokenString,
 	}
 	ctx.JSON(http.StatusOK, response)
 }
-
-// get user's notes by specicific user id, use userid from jwt token
 func (u *UserController) GetUserNotes(ctx *gin.Context) {
-	user, _ := ctx.Get("user")
-	claims := user.(jwt.MapClaims)
-	userID := claims["user"].(models.User).ID
-	notes, err := u.service.GetUserNotes(models.User{ID: userID})
+	claims, exists := ctx.Get("claims")
+	if !exists {
+		util.ErrorJSON(ctx, http.StatusUnauthorized, "Unauthorized: No claims found in context")
+		return
+	}
+
+	claimsData, ok := claims.(*routes.Claims)
+	if !ok {
+		util.ErrorJSON(ctx, http.StatusUnauthorized, "Unauthorized: Invalid token claims")
+		return
+	}
+
+	notes, err := u.service.GetUserNotes(claimsData.Username)
 	if err != nil {
 		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get notes")
 		return
 	}
-	response := make([]map[string]interface{}, 0)
+
+	response := make([]map[string]interface{}, 0, len(*notes))
 	for _, note := range *notes {
 		response = append(response, note.ResponseMap())
 	}
+
 	ctx.JSON(http.StatusOK, &util.Response{
 		Success: true,
 		Message: "Result set of notes",
