@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -41,60 +42,73 @@ func (u *UserController) SignUp(ctx *gin.Context) {
 
 // signin user
 // generate jwt token if user logged in to the system
-func (u *UserController) SignIn(ctx *gin.Context) {
-	var user models.UserLogin
-	SampleSecret := []byte("your_secret_key") // Use a consistent secret key
+const hmacSampleSecret = "AccessToken"
 
-	if err := ctx.ShouldBindJSON(&user); err != nil {
-		util.ErrorJSON(ctx, http.StatusBadRequest, "Invalid JSON")
+func (u *UserController) SignIn(c *gin.Context) {
+	var user models.UserLogin
+	if err := c.ShouldBindJSON(&user); err != nil {
+		util.ErrorJSON(c, http.StatusBadRequest, "Invalid JSON Provided")
 		return
 	}
-
 	dbUser, err := u.service.SignIn(user)
 	if err != nil {
-		util.ErrorJSON(ctx, http.StatusBadRequest, "Invalid Login")
+		util.ErrorJSON(c, http.StatusBadRequest, "Invalid Login Credentials")
 		return
 	}
 
-	// Generate token with user_id claim
+	// Debugging output
+	log.Printf("dbUser: %+v", dbUser)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": dbUser.ID,
-		"exp":     time.Now().Add(time.Minute * 15).Unix(),
+		"user": dbUser,
+		"exp":  time.Now().Add(time.Minute * 15).Unix(),
 	})
 
-	tokenString, err := token.SignedString(SampleSecret)
+	tokenString, err := token.SignedString([]byte(hmacSampleSecret))
 	if err != nil {
-		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to generate token")
+		// Debugging output
+		log.Printf("Error signing token: %v", err)
+		util.ErrorJSON(c, http.StatusBadRequest, "Failed to get token")
 		return
 	}
-
 	response := &util.Response{
 		Success: true,
-		Message: "Token generation is successful",
+		Message: "Token generated successfully",
 		Data:    tokenString,
 	}
-	ctx.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, response)
 }
+
 func (u *UserController) GetUserNotes(ctx *gin.Context) {
-	claims, exists := ctx.Get("claims")
+	user, exists := ctx.Get("user")
 	if !exists {
-		util.ErrorJSON(ctx, http.StatusUnauthorized, "Unauthorized: No claims found in context")
+		util.ErrorJSON(ctx, http.StatusUnauthorized, "User not found in context")
 		return
 	}
 
-	claimsData, ok := claims.(*routes.Claims)
+	// Debugging output to check the type of 'user'
+	log.Printf("Type of user in context: %T", user)
+
+	claims, ok := user.(*service.CustomClaim)
 	if !ok {
-		util.ErrorJSON(ctx, http.StatusUnauthorized, "Unauthorized: Invalid token claims")
+		// Debugging output if the type assertion fails
+		log.Printf("Type assertion to *CustomClaim failed, user: %+v", user)
+		util.ErrorJSON(ctx, http.StatusUnauthorized, "Invalid token claims")
 		return
 	}
 
-	notes, err := u.service.GetUserNotes(claimsData.Username)
+	username := claims.User.Username // Access the Username from the claims
+
+	// Debugging output
+	log.Printf("Username from claims: %s", username)
+
+	notes, err := u.service.GetUserNotes(username)
 	if err != nil {
 		util.ErrorJSON(ctx, http.StatusBadRequest, "Failed to get notes")
 		return
 	}
 
-	response := make([]map[string]interface{}, 0, len(*notes))
+	response := make([]map[string]interface{}, 0)
 	for _, note := range *notes {
 		response = append(response, note.ResponseMap())
 	}

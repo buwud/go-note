@@ -1,9 +1,15 @@
 package service
 
 import (
+	"github.com/golang-jwt/jwt"
 	"gonote.com/api/repository"
 	"gonote.com/models"
 )
+
+type CustomClaim struct {
+	User models.UserLogin `json:"user"`
+	jwt.StandardClaims
+}
 
 type UserService struct {
 	repository repository.UserRepository

@@ -1,21 +1,17 @@
 package routes
 
 import (
+	"errors"
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"gonote.com/api/controller"
+	"gonote.com/api/service"
 	"gonote.com/infrastructure"
 )
-
-var jwtKey = []byte("your_secret_key")
-
-type Claims struct {
-	Username string `json:"username"`
-	jwt.StandardClaims
-}
 
 type UserRoute struct {
 	Controller controller.UserController
@@ -34,46 +30,69 @@ func NewUserRoute(controller controller.UserController, handler infrastructure.G
 func (u UserRoute) Setup() {
 	user := u.Handler.Gin.Group("/auth")
 	{
-		user.POST("/signup", u.Controller.SignUp)
-		user.POST("/signin", u.Controller.SignIn)
+		user.POST("/register", u.Controller.SignUp)
+		user.POST("/login", u.Controller.SignIn)
 	}
-
-	// Protected routes
-	auth := u.Handler.Gin.Group("/auth")
-	auth.Use(authMiddleware())
+	// auth middleware
+	user.Use(authMiddleware())
 	{
-		auth.GET("/users", u.Controller.GetUsers)
-		auth.GET("/user/notes", u.Controller.GetUserNotes)
+		user.GET("/profile", u.Controller.GetUserNotes)
 	}
 }
+
+const hmacSampleSecret = "AccessToken"
 
 func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authorizationHeader := c.GetHeader("Authorization")
-		if authorizationHeader == "" {
-			c.AbortWithStatus(http.StatusUnauthorized)
+		auth := c.GetHeader("Authorization")
+		if auth == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Authorization Header Not Found"})
 			return
 		}
 
-		tokenString := strings.Replace(authorizationHeader, "Bearer ", "", 1)
-		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-			return jwtKey, nil
+		splitToken := strings.Split(auth, "Bearer ")
+		if len(splitToken) != 2 {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Invalid Authorization Header"})
+			return
+		}
+
+		auth = splitToken[1]
+
+		token, err := jwt.ParseWithClaims(auth, &service.CustomClaim{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte(hmacSampleSecret), nil
 		})
 
-		if err != nil || !token.Valid {
-			c.AbortWithStatus(http.StatusUnauthorized)
+		if err != nil {
+			var verr *jwt.ValidationError
+			if errors.As(err, &verr) {
+				switch {
+				case verr.Errors&jwt.ValidationErrorMalformed != 0:
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Token is malformed"})
+				case verr.Errors&jwt.ValidationErrorExpired != 0:
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Token is expired"})
+				case verr.Errors&jwt.ValidationErrorNotValidYet != 0:
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Token not active yet"})
+				case verr.Errors&jwt.ValidationErrorSignatureInvalid != 0:
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Invalid token signature"})
+				default:
+					c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Token parsing error", "Error": err.Error()})
+				}
+			} else {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Token parsing error", "Error": err.Error()})
+			}
 			return
 		}
 
-		claims, ok := token.Claims.(*Claims)
-		if !ok {
-			c.AbortWithStatus(http.StatusUnauthorized)
+		if claims, ok := token.Claims.(*service.CustomClaim); ok && token.Valid {
+			c.Set("user", claims)
+			//log claims
+			log.Printf("CLAIMS: ", claims)
+			log.Printf("User: %v, ExpiresAt: %v", claims.User.Username, claims.StandardClaims.ExpiresAt)
+		} else {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"Message": "Invalid Token Claims"})
 			return
 		}
 
-		c.Set("claims", claims)
 		c.Next()
 	}
 }
-
-//simdilik burda
