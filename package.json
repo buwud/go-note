@@ -1,0 +1,24 @@
+{
+  "name": "gonote",
+  "version": "1.0.0",
+  "description": "GoNote is a note-taking application featuring a backend in Golang, a frontend in React, and a Dockerized MySQL database.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node esbuild.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.24.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "esbuild": "^0.23.0",
+    "esbuild-sass-plugin": "^3.3.1"
+  }
+}

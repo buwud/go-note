@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"net/http"
 
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,10 +12,14 @@ type GinRouter struct {
 
 func NewGinRouter() GinRouter {
 	httpRouter := gin.Default()
-	httpRouter.Use(static.Serve("/", static.LocalFile("./views", true)))
+	//load template
+	httpRouter.Static("/assets", "./public/assets")
+	httpRouter.LoadHTMLGlob("views/*.html")
 
+	// Define route for the index page
 	httpRouter.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "UP and RUNNING..."})
+		// Render the index.html template
+		c.HTML(http.StatusOK, "index.html", gin.H{"title": "Home"})
 	})
 	return GinRouter{
 		Gin: httpRouter,
