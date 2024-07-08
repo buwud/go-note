@@ -21,6 +21,9 @@ func NewGinRouter() GinRouter {
 		// Render the index.html template
 		c.HTML(http.StatusOK, "index.html", gin.H{"title": "Home"})
 	})
+	httpRouter.GET("*", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{"title": "Home"})
+	})
 	return GinRouter{
 		Gin: httpRouter,
 	}
