@@ -9,6 +9,7 @@ export default function Home() {
                 <h1 className="home-title">Go Note</h1>
                 <nav>
                     <Link to="/about" className="home-link">About</Link>
+                    <Link to="/about" className="home-link">Login</Link>
                 </nav>
             </header>
             <main className="home-main">
