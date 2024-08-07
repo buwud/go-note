@@ -2383,9 +2383,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React6 = require_react();
+          var React7 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -3990,7 +3990,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React6.Children.forEach(props.children, function(child) {
+                  React7.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -23524,7 +23524,7 @@
   });
 
   // frontend/Application.tsx
-  var import_react3 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
   var import_client = __toESM(require_client());
 
   // node_modules/react-router-dom/dist/index.js
@@ -25449,16 +25449,22 @@
     return matchPath(path.pathname, nextPath) != null || matchPath(path.pathname, currentPath) != null;
   }
 
-  // frontend/pages/Home.tsx
+  // frontend/pages/home/Home.tsx
   var import_react = __toESM(require_react());
   function Home() {
-    return /* @__PURE__ */ import_react.default.createElement("div", { className: "home-container" }, /* @__PURE__ */ import_react.default.createElement("header", { className: "home-header" }, /* @__PURE__ */ import_react.default.createElement("h1", { className: "home-title" }, "Go Note"), /* @__PURE__ */ import_react.default.createElement("nav", null, /* @__PURE__ */ import_react.default.createElement(Link, { to: "/about", className: "home-link" }, "About"), /* @__PURE__ */ import_react.default.createElement(Link, { to: "/about", className: "home-link" }, "Login"))), /* @__PURE__ */ import_react.default.createElement("main", { className: "home-main" }, /* @__PURE__ */ import_react.default.createElement("h2", { className: "home-subtitle" }, "Your Notes, Organized"), /* @__PURE__ */ import_react.default.createElement("p", { className: "home-description" }, "Welcome to Go Note! Keep all your notes in one place, easily accessible and beautifully organized."), /* @__PURE__ */ import_react.default.createElement(Link, { to: "/notes", className: "home-button" }, "Get Started")));
+    return /* @__PURE__ */ import_react.default.createElement("div", { className: "home-container" }, /* @__PURE__ */ import_react.default.createElement("header", { className: "home-header" }, /* @__PURE__ */ import_react.default.createElement("h1", { className: "home-title" }, "Go Note"), /* @__PURE__ */ import_react.default.createElement("nav", null, /* @__PURE__ */ import_react.default.createElement(Link, { to: "/about", className: "home-link" }, "About"), /* @__PURE__ */ import_react.default.createElement(Link, { to: "/login", className: "home-link" }, "Login"))), /* @__PURE__ */ import_react.default.createElement("main", { className: "home-main" }, /* @__PURE__ */ import_react.default.createElement("h2", { className: "home-subtitle" }, "Your Notes, Organized"), /* @__PURE__ */ import_react.default.createElement("p", { className: "home-description" }, "Welcome to Go Note! Keep all your notes in one place, easily accessible and beautifully organized."), /* @__PURE__ */ import_react.default.createElement(Link, { to: "/login", className: "home-button" }, "Get Started")));
   }
 
-  // frontend/pages/About.tsx
+  // frontend/pages/about/About.tsx
   var import_react2 = __toESM(require_react());
   function About() {
     return /* @__PURE__ */ import_react2.default.createElement("div", null, "About");
+  }
+
+  // frontend/pages/login/Login.tsx
+  var import_react3 = __toESM(require_react());
+  function Login() {
+    return /* @__PURE__ */ import_react3.default.createElement("div", null, "Login");
   }
 
   // frontend/Application.tsx
@@ -25466,7 +25472,7 @@
   var root = document.getElementById("app");
   if (root) {
     (0, import_client.createRoot)(root).render(
-      /* @__PURE__ */ import_react3.default.createElement(BrowserRouter, null, /* @__PURE__ */ import_react3.default.createElement(Routes, null, /* @__PURE__ */ import_react3.default.createElement(Route, { index: true, element: /* @__PURE__ */ import_react3.default.createElement(Home, null) }), /* @__PURE__ */ import_react3.default.createElement(Route, { path: "/about", element: /* @__PURE__ */ import_react3.default.createElement(About, null) })))
+      /* @__PURE__ */ import_react4.default.createElement(BrowserRouter, null, /* @__PURE__ */ import_react4.default.createElement(Routes, null, /* @__PURE__ */ import_react4.default.createElement(Route, { index: true, element: /* @__PURE__ */ import_react4.default.createElement(Home, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/about", element: /* @__PURE__ */ import_react4.default.createElement(About, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/login", element: /* @__PURE__ */ import_react4.default.createElement(Login, null) })))
     );
   } else {
     throw new Error("Root element not found");

@@ -1,6 +1,9 @@
 package main
 
 import (
+	"path/filepath"
+
+	"github.com/gin-gonic/gin"
 	"gonote.com/api/controller"
 	"gonote.com/api/repository"
 	"gonote.com/api/routes"
@@ -32,5 +35,12 @@ func main() {
 	userRoute.Setup()
 
 	db.DB.AutoMigrate(&models.Note{}, &models.User{})
+
+	router.Gin.Static("/static", "./build/static")
+
+	router.Gin.NoRoute(func(c *gin.Context) {
+		c.File(filepath.Join("./build", "index.html"))
+	})
+
 	router.Gin.Run(":8000")
 }
