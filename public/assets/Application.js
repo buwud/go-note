@@ -25472,7 +25472,7 @@
   var root = document.getElementById("app");
   if (root) {
     (0, import_client.createRoot)(root).render(
-      /* @__PURE__ */ import_react4.default.createElement(BrowserRouter, null, /* @__PURE__ */ import_react4.default.createElement(Routes, null, /* @__PURE__ */ import_react4.default.createElement(Route, { index: true, element: /* @__PURE__ */ import_react4.default.createElement(Home, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/about", element: /* @__PURE__ */ import_react4.default.createElement(About, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/login", element: /* @__PURE__ */ import_react4.default.createElement(Login, null) })))
+      /* @__PURE__ */ import_react4.default.createElement(BrowserRouter, null, /* @__PURE__ */ import_react4.default.createElement(Routes, null, /* @__PURE__ */ import_react4.default.createElement(Route, { index: true, element: /* @__PURE__ */ import_react4.default.createElement(Home, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/about", element: /* @__PURE__ */ import_react4.default.createElement(About, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/login", element: /* @__PURE__ */ import_react4.default.createElement(Login, null) }), /* @__PURE__ */ import_react4.default.createElement(Route, { path: "/*", element: /* @__PURE__ */ import_react4.default.createElement(Home, null) })))
     );
   } else {
     throw new Error("Root element not found");

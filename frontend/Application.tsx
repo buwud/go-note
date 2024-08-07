@@ -23,6 +23,9 @@ if (root) {
                 <Route index element={<Home />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/*" element={<Home />} />
+
+
             </Routes>
         </BrowserRouter>
     );

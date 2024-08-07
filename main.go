@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"path/filepath"
+	"runtime"
 
 	"github.com/gin-gonic/gin"
 	"gonote.com/api/controller"
@@ -36,11 +38,20 @@ func main() {
 
 	db.DB.AutoMigrate(&models.Note{}, &models.User{})
 
-	router.Gin.Static("/static", "./build/static")
+	// Determine the base path of the current file
+	_, b, _, _ := runtime.Caller(0)
+	basePath := filepath.Dir(b)
 
+	// Serve static files
+	router.Gin.Static("/static", filepath.Join(basePath, "build", "static"))
+
+	// Serve index.html for all other routes
 	router.Gin.NoRoute(func(c *gin.Context) {
-		c.File(filepath.Join("./build", "index.html"))
+		c.File(filepath.Join(basePath, "build", "index.html"))
 	})
+
+	//log paths
+	log.Printf("Base path: %s", basePath)
 
 	router.Gin.Run(":8000")
 }
