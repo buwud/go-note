@@ -25458,7 +25458,7 @@
   // frontend/pages/about/About.tsx
   var import_react2 = __toESM(require_react());
   function About() {
-    return /* @__PURE__ */ import_react2.default.createElement("div", null, "About");
+    return /* @__PURE__ */ import_react2.default.createElement("div", { className: "about-container" }, /* @__PURE__ */ import_react2.default.createElement("h1", null, "About Us"), /* @__PURE__ */ import_react2.default.createElement("p", null, "Welcome to our weather app! We provide up-to-date weather information for locations around the world."), /* @__PURE__ */ import_react2.default.createElement("p", null, "Our mission is to make sure you are always prepared for whatever weather comes your way. Whether you're planning a trip or just need to know if you should bring an umbrella, we've got you covered!"), /* @__PURE__ */ import_react2.default.createElement("p", null, "This app was created with love by a dedicated team of developers who believe in making weather information accessible and easy to use for everyone."), /* @__PURE__ */ import_react2.default.createElement("footer", null, /* @__PURE__ */ import_react2.default.createElement("p", null, "Created by buwu | Hacked by Tahinli")));
   }
 
   // frontend/pages/login/Login.tsx
